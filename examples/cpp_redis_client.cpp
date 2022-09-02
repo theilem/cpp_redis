@@ -22,12 +22,11 @@
 #include <string>
 #include <cpp_redis/cpp_redis>
 #include <cpp_redis/misc/macro.hpp>
-#include "winsock_initializer.h"
+#include "examples/winsock_initializer.h"
 
 #define ENABLE_SESSION = 1
 
-int
-main(void) {
+int main(void) {
 	winsock_initializer winsock_init;
 	//! Enable logging
 	cpp_redis::active_logger = std::unique_ptr<cpp_redis::logger>(new cpp_redis::logger);

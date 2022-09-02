@@ -73,7 +73,10 @@ cc_binary(
 
 cc_binary(
     name = "example_cpp_redis_client",
-    srcs = ["examples/cpp_redis_client.cpp"],
+    srcs = [
+        "examples/cpp_redis_client.cpp",
+        "examples/winsock_initializer.h"
+    ],
     # TODO (steple): For windows, link ws2_32 instead.
     linkopts = ["-lpthread"],
     deps = ["cpp_redis"],
