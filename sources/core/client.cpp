@@ -2574,6 +2574,7 @@ namespace cpp_redis {
 	client::xrevrange(const std::string &key, const range_options_t &range_args, const reply_callback_t &reply_callback) {
 		std::vector<std::string> cmd = {"XREVRANGE", key, range_args.Start, range_args.Stop};
 		if (range_args.Count > 0) {
+                        cmd.emplace_back("COUNT");
 			cmd.emplace_back(std::to_string(range_args.Count));
 		}
 		send(cmd, reply_callback);
