@@ -28,10 +28,10 @@ cmake_minimum_required(VERSION 3.13)
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
   cmake_policy(SET CMP0048 NEW)
   project(cpp_redis
-    VERSION 4.4.0
-    DESCRIPTION "Lightweight C++11 Redis Client"
-    HOMEPAGE_URL "https://github.com/cpp-redis/cpp_redis"
-    LANGUAGES CXX)
+          VERSION 4.4.0
+          DESCRIPTION "Lightweight C++11 Redis Client"
+          HOMEPAGE_URL "https://github.com/cpp-redis/cpp_redis"
+          LANGUAGES CXX)
 else ()
   # for cmake >= 3.0
   project(cpp_redis VERSION 4.4.0 LANGUAGES CXX)
@@ -90,8 +90,8 @@ if (NOT tacopie_library AND NOT USE_CUSTOM_TCP_CLIENT)
   # requires CMP0077 set to NEW
   set(BUILD_EXAMPLES OFF)
   set(BUILD_TESTS OFF)
-  add_subdirectory(tacopie)
-  set(EXPORT_TARGET_NAME ${EXPORT_TARGET_NAME} tacopie)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tacopie)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tacopie/includes)
   # TODO: add alias library
 endif ()
 
@@ -128,18 +128,18 @@ add_library(${PROJECT_NAME} SHARED ${cpp_redis_sources})
 # includes
 ###
 target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${cpp_redis_includes}>
-  $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${cpp_redis_includes}>
+        $<INSTALL_INTERFACE:include>)
 
 if (WIN32)
   set_target_properties(${PROJECT_NAME} PROPERTIES
-    COMPILE_PDB_NAME ${PROJECT_NAME}
-    COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+          COMPILE_PDB_NAME ${PROJECT_NAME}
+          COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 endif ()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  SOVERSION ${PROJECT_VERSION}
-  RESOURCE ${CMAKE_PKGCONFIG_OUTPUT_DIRECTORY}/${PROJECT_NAME}.pc)
+        SOVERSION ${PROJECT_VERSION}
+        RESOURCE ${CMAKE_PKGCONFIG_OUTPUT_DIRECTORY}/${PROJECT_NAME}.pc)
 
 find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
@@ -175,10 +175,17 @@ install(DIRECTORY ${cpp_redis_includes}/ DESTINATION include USE_SOURCE_PERMISSI
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME} EXPORT ${EXPORT_TARGET_NAME}
-  LIBRARY
-  RESOURCE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+        LIBRARY
+        RESOURCE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION lib/${PROJECT_NAME} EXPORT_LINK_INTERFACE_LIBRARIES)
 
+# Install tacopie
+if (NOT USE_CUSTOM_TCP_CLIENT)
+  install(TARGETS tacopie EXPORT tacopie
+          LIBRARY
+          RESOURCE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+  install(EXPORT tacopie DESTINATION lib/tacopie)
+endif ()
 
 ###
 # examples
