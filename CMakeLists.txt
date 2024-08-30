@@ -90,8 +90,7 @@ if (NOT tacopie_library AND NOT USE_CUSTOM_TCP_CLIENT)
   # requires CMP0077 set to NEW
   set(BUILD_EXAMPLES OFF)
   set(BUILD_TESTS OFF)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tacopie)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tacopie/includes)
+  add_subdirectory(tacopie)
   # TODO: add alias library
 endif ()
 
@@ -148,6 +147,9 @@ if (tacopie_library)
   target_link_libraries(${PROJECT_NAME} PUBLIC ${tacopie_library})
 else ()
   target_link_libraries(${PROJECT_NAME} PUBLIC tacopie)
+
+  install(TARGETS tacopie
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif ()
 
 ###
@@ -174,18 +176,8 @@ endif ()
 install(DIRECTORY ${cpp_redis_includes}/ DESTINATION include USE_SOURCE_PERMISSIONS)
 
 include(GNUInstallDirs)
-install(TARGETS ${PROJECT_NAME} EXPORT ${EXPORT_TARGET_NAME}
-        LIBRARY
-        RESOURCE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION lib/${PROJECT_NAME} EXPORT_LINK_INTERFACE_LIBRARIES)
-
-# Install tacopie
-if (NOT USE_CUSTOM_TCP_CLIENT)
-  install(TARGETS tacopie EXPORT tacopie
-          LIBRARY
-          RESOURCE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-  install(EXPORT tacopie DESTINATION lib/tacopie)
-endif ()
+install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 ###
 # examples
